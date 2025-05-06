@@ -15,9 +15,12 @@ jobs:
     steps:
     - name: 'Hello World'
       run: echo "Hello World"
+    - name: Checkout
+      uses: actions/checkout@v4.2.2      
     - name: 'Fecha'
       run: date
     - name: Muestra el contenido del directorio
-      run: ls -la         
+      run: ls -la    
+         
           
 
