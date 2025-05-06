@@ -1,0 +1,1 @@
+[![Node.js CI](https://github.com/erickdiazbabelgroup/github-actions-prueba/actions/workflows/node.js.yml/badge.svg)](https://github.com/erickdiazbabelgroup/github-actions-prueba/actions/workflows/node.js.yml)
