@@ -35,7 +35,7 @@ jobs:
          
       - uses: actions/upload-artifact@main
         with:
-          name: webpack artifacts
+          name: vite-artifacts-${{ matrix.os }}-${{ matrix.node-version }}
           path: dist/         
   test:
       needs: build
@@ -45,5 +45,5 @@ jobs:
           - uses: actions/checkout@v3
           - uses: actions/download-artifact@main
             with:
-              name: webpack artifacts
+              name: vite-artifacts-${{ matrix.os }}-${{ matrix.node-version }}
               path: dist
