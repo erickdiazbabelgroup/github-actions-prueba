@@ -1,49 +1,48 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
-name: Node.js CI
+name: Node.js CI with Deploy
 
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
+
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [ 20.x, 18.x, 22.x ]
-        os: [ubuntu-latest, windows-latest]
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:          
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - run: npm ci --legacy-peer-deps --no-fund --no-audit
-      - run: npx standard --fix
-      - run: npm run lint  
-      - run: npm run test     
-      - run: npm run build
-         
-      - uses: actions/upload-artifact@main
-        with:
-          name: vite-artifacts-${{ matrix.os }}-${{ matrix.node-version }}
-          path: dist/         
-  test:
-      needs: build
-      runs-on: ubuntu-latest
 
-      steps:
-          - uses: actions/checkout@v3
-          - uses: actions/download-artifact@main
-            with:
-              name: vite-artifacts-${{ matrix.os }}-${{ matrix.node-version }}
-              path: dist
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+
+      - run: npm ci --legacy-peer-deps --no-fund --no-audit
+      - run: npm run lint
+      - run: npm run test
+      - run: npm run build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vite-artifacts
+          path: dist/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: vite-artifacts
+          path: downloaded-dist/
+
+      - name: List contents
+        run: ls -R downloaded-dist
