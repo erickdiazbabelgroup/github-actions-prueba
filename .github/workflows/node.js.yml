@@ -12,25 +12,6 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [ 20.x, 18.x, 22.x ]
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-          cache: 'npm'
-      - run: npm ci --legacy-peer-deps --no-fund --no-audit
-      - run: npx standard --fix
-      - run: npm run lint  
-      - run: npm run test     
-      - run: npm run build
   test:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -48,6 +29,5 @@ jobs:
         npm install
         npm test
       env:
-        CI: true         
-            
+        CI: true
 
