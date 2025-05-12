@@ -1,48 +1,36 @@
-name: Node.js CI with Deploy
+name: Node.js CI
 
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
-
 jobs:
   build:
+
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [ 20.x, 18.x, 22.x ]
+        os: [ubuntu-latest, windows-latest]
 
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
+        with:          
+          node-version: ${{ matrix.node-version }}
           cache: 'npm'
-
       - run: npm ci --legacy-peer-deps --no-fund --no-audit
-      - run: npm run lint
-      - run: npm run test
+      - run: npx standard --fix
+      - run: npm run lint  
+      - run: npm run test     
       - run: npm run build
-
-      - uses: actions/upload-artifact@v4
+         
+      - uses: actions/upload-artifact@main
         with:
-          name: vite-artifacts
-          path: dist/
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: vite-artifacts
-          path: downloaded-dist/
-
-      - name: List contents
-        run: ls -R downloaded-dist
+          name: webpack artifacts
+          path: public/      
